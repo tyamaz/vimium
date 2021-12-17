@@ -386,8 +386,16 @@ VisualMode.prototype.movements = {
   "Y"(count) { this.movement.selectLine(count); return this.yank(); },
   "p"() { return chrome.runtime.sendMessage({handler: "openUrlInCurrentTab", url: this.yank()}); },
   "P"() { return chrome.runtime.sendMessage({handler: "openUrlInNewTab", url: this.yank()}); },
-  "v"() { return new VisualMode; },
-  "V"() { return new VisualLineMode; },
+  "v"() {
+    const mode = new VisualMode();
+    mode.init();
+    return mode;  
+  },
+  "V"() {
+    const mode = new VisualLineMode();
+    mode.init();
+    return mode;
+  },
   "c"() {
     // If we're already in caret mode, or if the selection looks the same as it would in caret mode, then
     // callapse to anchor (so that the caret-mode selection will seem unchanged).  Otherwise, we're in visual
@@ -396,7 +404,10 @@ VisualMode.prototype.movements = {
       this.movement.collapseSelectionToAnchor();
     else
       this.movement.collapseSelectionToFocus();
-    return new CaretMode;
+    
+    const mode = new CaretMode();
+    mode.init();
+    return mode;
   },
   "o"() { return this.movement.reverseSelection(); }
 };
